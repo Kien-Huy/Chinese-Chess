@@ -41,6 +41,7 @@ class piece:
         self.color = color
         self.selected = False
         self.move_list = []
+        self.king = False
 
     def isSelected(self):
         return self.selected
@@ -59,14 +60,17 @@ class piece:
             for move in moves:
                 x = self.startX + (move[0] * 71) + 7
                 y = self.startY + (move[1] * 71)
-                win.blit(moved, (x+5,y+5))
+                win.blit(moved, [x+5,y+5])
 
         x = self.startX + (self.col * 71) + 7
         y = self.startY + (self.row * 71)
         if self.selected:
-            win.blit(selected,(x-6,y-6))
+            win.blit(selected,[x-6,y-6])
         win.blit(drawThis,(x,y))
 
+    def change_pos(self, pos):
+        self.row = pos[0]
+        self.col = pos[1]
 class Advisor(piece):
     image = 0
     def valid_moves(self, board):
@@ -103,12 +107,16 @@ class Horse(piece):
                 if p != 0:
                     flag = True
                 if flag == False:
-                    p = board[i + targets[k][0]][j + targets[k][1]]
-                    if p == 0 or p.color != self.color:
-                        move.append((j + targets[k][1], i + targets[k][0]))
+                    if 0 <= i + targets[k][0] <= 9 and 0 <= j + targets[k][1] <= 8:
+                        p = board[i + targets[k][0]][j + targets[k][1]]
+                        if p == 0 or p.color != self.color:
+                            move.append((j + targets[k][1], i + targets[k][0]))
         return move
 class King(piece):
     image = 2
+    def __init__(self,row , col , color):
+        super().__init__(row,col,color)
+        self.king = True
 
     def valid_moves(self, board):
         i = self.row
@@ -284,6 +292,7 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((j, k))
+                            break
                 break
             else:
                 break
@@ -299,6 +308,7 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((j, k))
+                            break
                 break
             else:
                 break
@@ -314,6 +324,7 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((k, i))
+                            break
                 break
             else:
                 break
@@ -329,6 +340,7 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((k, i))
+                            break
                 break
             else:
                 break

@@ -50,27 +50,96 @@ class Board():
         self.board[9][7] = Horse(9,7,'r')
         self.board[9][8] = Charoit(9,8,'r')
 
-    def update_moves(self,board):
+    def update_moves(self):
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0 :
-                    self.board[i][j].update_valid_moves(board)
+                    self.board[i][j].update_valid_moves(self.board)
     def draw(self,win):
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0:
                     self.board[i][j].draw(win)
+    def get_danger_moves(self,color):
+        danger_moves = []
+        for i in range(self.cols):
+            for j in range(self.rows):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].color != color:
+                        danger_moves.append(self.board[i][j].move_list)
+        return danger_moves
 
-    def select(self,col,row):
+    def checkMate(self, color):
+        danger_moves = self.get_danger_moves(color)
+        king_moves = []
+        for i in range(self.cols):
+            for j in range(self.rows):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].king and self.board[i][j].color == color:
+                        king_moves.append(self.board[i][j].move_list)
+        if len(king_moves) == 0:
+            return False
+        for move in king_moves:
+            if move not in danger_moves:
+                return False
+        return True
+
+    def is_checked(self, color):
+        danger_moves = self.get_danger_moves(color)
+        king_pos = (-1,-1)
+        for i in range(self.cols):
+            for j in range(self.rows):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].color != color:
+                        danger_moves.append(self.board[i][j].move_list)
+                    else:
+                        if self.board[i][j].king and self.board[i][j].color == color:
+                            king_pos = (i,j)
+        if king_pos not in danger_moves:
+            return False
+        else:
+            return True
+
+
+
+    def select(self,col,row,color):
+        changed = False
+        prev = (-1, -1)
+        for i in range(self.cols):
+            for j in range(self.rows):
+                if self.board[i][j] != 0:
+                    if self.board[i][j].selected:
+                        prev = (i, j)
+        if self.board[row][col] == 0:
+            moves = self.board[prev[0]][prev[1]].move_list
+            if (col,row) in moves:
+                self.move(prev,(col,row))
+                changed = True
+            self.reset_selected()
+        else:
+            if self.board[prev[0]][prev[1]].color != self.board[row][col].color:
+                moves = self.board[prev[0]][prev[1]].move_list
+                if (col, row) in moves:
+                    self.move(prev, (col, row))
+                    changed = True
+                self.reset_selected()
+                if self.board[row][col].color == color:
+                    self.board[row][col].selected = True
+            else:
+                self.reset_selected()
+                if self.board[row][col].color == color:
+                    self.board[row][col].selected = True
+        return changed
+
+    def reset_selected(self):
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0:
                     self.board[i][j].selected = False
-        if self.board[row][col] != 0:
-            self.board[row][col].selected = True
 
     def move(self, start, end):
-        removed = self.board[end[1]][end[0]]
-        self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
-        self.board[start[1]][start[0]] = 0
-        return removed
+        nBoard = self.board[:]
+        nBoard[start[0]][start[1]].change_pos((end[1],end[0]))
+        nBoard[end[1]][end[0]] = nBoard[start[0]][start[1]]
+        nBoard[start[0]][start[1]] = 0
+        self.board = nBoard
