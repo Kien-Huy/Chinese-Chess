@@ -2,6 +2,7 @@ import socket
 from _thread import *
 import pickle
 import time
+from Board import Board
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -21,7 +22,7 @@ print("[START] Waiting for a connection")
 
 connections = 0
 
-games = {0: Board(8, 8)}
+games = {0: Board(9, 10)}
 
 spectartor_ids = []
 specs = 0
@@ -84,9 +85,9 @@ def threaded_client(conn, game, spec=False):
                     if data == "winner b":
                         bo.winner = "b"
                         print("[GAME] Player b won in game", game)
-                    if data == "winner w":
-                        bo.winner = "w"
-                        print("[GAME] Player w won in game", game)
+                    if data == "winner r":
+                        bo.winner = "r"
+                        print("[GAME] Player r won in game", game)
 
                     if data == "update moves":
                         bo.update_moves()
@@ -95,16 +96,16 @@ def threaded_client(conn, game, spec=False):
                         name = data.split(" ")[1]
                         if currentId == "b":
                             bo.p2Name = name
-                        elif currentId == "w":
+                        elif currentId == "r":
                             bo.p1Name = name
 
                     # print("Recieved board from", currentId, "in game", game)
 
                     if bo.ready:
-                        if bo.turn == "w":
-                            bo.time1 = 900 - (time.time() - bo.startTime) - bo.storedTime1
+                        if bo.turn == "r":
+                            bo.time1 = 600 - (time.time() - bo.startTime) - bo.storedTime1
                         else:
-                            bo.time2 = 900 - (time.time() - bo.startTime) - bo.storedTime2
+                            bo.time2 = 600 - (time.time() - bo.startTime) - bo.storedTime2
 
                     sendData = pickle.dumps(bo)
                     # print("Sending board to player", currentId, "in game", game)
@@ -182,10 +183,10 @@ while True:
         if g == -1:
             try:
                 g = list(games.keys())[-1] + 1
-                games[g] = Board(8, 8)
+                games[g] = Board(9, 10)
             except:
                 g = 0
-                games[g] = Board(8, 8)
+                games[g] = Board(9, 10)
 
         '''if addr[0] in spectartor_ids and specs == 0:
             spec = True

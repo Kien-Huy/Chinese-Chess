@@ -53,7 +53,7 @@ class Board():
     def update_moves(self):
         for i in range(self.cols):
             for j in range(self.rows):
-                if self.board[i][j] != 0 :
+                if self.board[i][j] != 0:
                     self.board[i][j].update_valid_moves(self.board)
     def draw(self,win):
         for i in range(self.cols):
@@ -143,3 +143,4 @@ class Board():
         nBoard[end[1]][end[0]] = nBoard[start[0]][start[1]]
         nBoard[start[0]][start[1]] = 0
         self.board = nBoard
+        self.reset_selected()

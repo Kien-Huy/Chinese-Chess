@@ -7,6 +7,14 @@ background = pygame.image.load(os.path.join("img", "background.png"))
 board_image = pygame.image.load("assets/image/Board.png")
 
 rect = (216, 10, 650, 700)
+# turn = 'r'
+def menu_screen(window):
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
 def redraw_gamewindow(window,bo,p1,p2):
     window.blit(background, (0, 0))
     window.blit(board_image, (216, 0))
@@ -47,12 +55,18 @@ def end_screen(window, text):
 
 
 def click(pos):
-    x = pos[0] // 71 - 3
-    y = pos[1] // 71
-    return x,y
+    if pos != None:
+        x = pos[0] // 71 - 3
+        y = pos[1] // 71
+        return x,y
+    else:
+        return -1,-1
+def connect():
+    pass
 def main():
     p1Time = 60*10
     p2Time = 60*10
+    # global turn
     turn = 'r'
     bo = Board(9,10)
     clock = pygame.time.Clock()
@@ -74,16 +88,19 @@ def main():
                 pygame.quit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                bo.update_moves()
-                i, j = click(pos)
-                change = bo.select(i,j,turn)
-                if change:
-                    if turn == "r":
-                        turn = "b"
-                    else:
-                        turn = "r"
-                bo.update_moves()
+                # if turn == color:
+                    pos = pygame.mouse.get_pos()
+                    bo.update_moves()
+                    i, j = click(pos)
+                    change = bo.select(i,j,turn)
+                    if change:
+                        if turn == "r":
+                            turn = "b"
+                            bo.reset_selected()
+                        else:
+                            turn = "r"
+                        bo.reset_selected()
+                    bo.update_moves()
         # if bo.checkMate("r"):
         #     end_screen(window,"Red wins")
         # if bo.checkMate("b"):
@@ -92,4 +109,5 @@ def main():
 WIDTH, HEIGHT = 1080, 720
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Chinese chess game')
+# bo, color = connect()
 main()
