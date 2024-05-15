@@ -14,7 +14,7 @@ class Network:
 
     def connect(self):
         self.client.connect(self.addr)
-        return self.client.recv(4096*10)
+        return self.client.recv(4096*8)
 
     def disconnect(self):
         self.client.close()

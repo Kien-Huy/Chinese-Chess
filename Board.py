@@ -56,11 +56,12 @@ class Board():
         self.board[9][6] = Elephant(9,6,'r')
         self.board[9][7] = Horse(9,7,'r')
         self.board[9][8] = Charoit(9,8,'r')
-
+        self.p1Name = "Player 1"
+        self.p2Name = "Player 2"
         self.turn = "r"
         self.time1 = 600
         self.time2 = 600
-
+        self.start_user = ""
         self.storedTime1 = 0
         self.storedTime2 = 0
         self.startTime = time.time()
@@ -70,11 +71,11 @@ class Board():
             for j in range(self.rows):
                 if self.board[i][j] != 0:
                     self.board[i][j].update_valid_moves(self.board)
-    def draw(self,win):
+    def draw(self,win,color):
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0:
-                    self.board[i][j].draw(win,self.board)
+                    self.board[i][j].draw(win,color,self.board)
     def get_danger_moves(self,color):
         danger_moves = []
         for i in range(self.cols):
@@ -144,6 +145,13 @@ class Board():
                 self.reset_selected()
                 if self.board[row][col].color == color:
                     self.board[row][col].selected = True
+        if changed:
+            if self.turn == "r":
+                self.turn = "b"
+                self.reset_selected()
+            else:
+                self.turn = "r"
+                self.reset_selected()
         return changed
 
     def reset_selected(self):

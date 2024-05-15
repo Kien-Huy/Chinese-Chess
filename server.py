@@ -49,7 +49,7 @@ def threaded_client(conn, game, spec=False):
         bo = games[game]
 
         if connections % 2 == 0:
-            currentId = "w"
+            currentId = "r"
         else:
             currentId = "b"
 
