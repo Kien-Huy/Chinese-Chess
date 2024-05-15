@@ -2,6 +2,7 @@ import pygame.display
 import os
 import time
 from Board import Board
+from client import Network
 pygame.font.init()
 background = pygame.image.load(os.path.join("img", "background.png"))
 board_image = pygame.image.load("assets/image/Board.png")
@@ -62,17 +63,27 @@ def click(pos):
     else:
         return -1,-1
 def connect():
-    pass
+    global n,bo
+    n = Network()
+    return n.board
 def main():
     p1Time = 60*10
     p2Time = 60*10
     # global turn
     turn = 'r'
-    bo = Board(9,10)
+    color = 'r'
+
     clock = pygame.time.Clock()
     start_time = time.time()
     run = True
     while run:
+        if bo.turn != color:
+            bo = n.send(str.encode("get"))
+        try:
+            b.board
+            bo = b
+        except:
+            pass
         clock.tick(10)
         if turn == "r":
             p1Time -= (time.time()- start_time)
@@ -88,17 +99,17 @@ def main():
                 pygame.quit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # if turn == color:
+                if bo.turn == color:
                     pos = pygame.mouse.get_pos()
                     bo.update_moves()
                     i, j = click(pos)
-                    change = bo.select(i,j,turn)
+                    change = bo.select(i,j,bo.turn)
                     if change:
-                        if turn == "r":
-                            turn = "b"
+                        if bo.turn == "r":
+                            bo.turn = "b"
                             bo.reset_selected()
                         else:
-                            turn = "r"
+                            bo.turn = "r"
                         bo.reset_selected()
                     bo.update_moves()
         # if bo.checkMate("r"):
@@ -109,5 +120,5 @@ def main():
 WIDTH, HEIGHT = 1080, 720
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Chinese chess game')
-# bo, color = connect()
+bo = connect()
 main()

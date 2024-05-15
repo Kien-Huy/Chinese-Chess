@@ -11,9 +11,10 @@ class Network:
         self.board = self.connect()
         self.board = pickle.loads(self.board)
 
+
     def connect(self):
         self.client.connect(self.addr)
-        return self.client.recv(4096*8)
+        return self.client.recv(4096*10)
 
     def disconnect(self):
         self.client.close()

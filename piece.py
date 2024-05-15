@@ -49,7 +49,7 @@ class piece:
     def update_valid_moves(self, board):
         self.move_list = self.valid_moves(board)
 
-    def draw(self, win):
+    def draw(self, win, board):
         if self.color == "r":
             drawThis= R[self.image]
         else:
@@ -60,7 +60,12 @@ class piece:
             for move in moves:
                 x = self.startX + (move[0] * 71) + 7
                 y = self.startY + (move[1] * 71)
-                win.blit(moved, [x+5,y+5])
+                p = board[move[1]][move[0]]
+                if p != 0:
+                    if p.color != self.color:
+                        win.blit(captured,[x-5,y-5])
+                else:
+                    win.blit(moved, [x+5,y+5])
 
         x = self.startX + (self.col * 71) + 7
         y = self.startY + (self.row * 71)

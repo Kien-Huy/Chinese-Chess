@@ -5,11 +5,18 @@ from piece import Elephant
 from piece import Pawn
 from piece import Charoit
 from piece import Canon
+import time
+import pygame
+
 class Board():
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
+        self.ready = False
 
+        self.last = None
+
+        self.copy = True
         self.board = [[0 for x in range(rows)] for _ in range(cols)]
 
         self.board[0][0] = Charoit(0,0,'b')
@@ -50,6 +57,14 @@ class Board():
         self.board[9][7] = Horse(9,7,'r')
         self.board[9][8] = Charoit(9,8,'r')
 
+        self.turn = "r"
+        self.time1 = 600
+        self.time2 = 600
+
+        self.storedTime1 = 0
+        self.storedTime2 = 0
+        self.startTime = time.time()
+        self.winner = None
     def update_moves(self):
         for i in range(self.cols):
             for j in range(self.rows):
@@ -59,7 +74,7 @@ class Board():
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0:
-                    self.board[i][j].draw(win)
+                    self.board[i][j].draw(win,self.board)
     def get_danger_moves(self,color):
         danger_moves = []
         for i in range(self.cols):

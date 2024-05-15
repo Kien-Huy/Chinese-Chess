@@ -198,4 +198,4 @@ while True:
         print("[DATA] Number of Connections:", connections + 1)
         print("[DATA] Number of Games:", len(games))
 
-        start_new_thread(threaded_client, (conn, g, spec))
+        start_new_thread(threaded_client, (conn, g))
