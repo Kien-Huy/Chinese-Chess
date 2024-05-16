@@ -178,8 +178,6 @@ class Elephant(piece):
 
 class Pawn(piece):
     image = 4
-    def __init__(self,row,col,color):
-        super().__init__(row,col,color)
 
     def valid_moves(self,board):
         i = self.row

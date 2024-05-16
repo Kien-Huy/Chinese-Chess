@@ -66,7 +66,12 @@ def redraw_gameWindow(window,bo,p1,p2,color,ready):
         print(e)
     window.blit(txt, (900, 550))
     window.blit(txt2, (900, 10))
-
+    if bo.capture:
+        txt5 = font.render("Capture", 1, (255, 255, 0))
+        window.blit(txt5, (10,250))
+    else:
+        txt5 = font.render("", 1, (255, 255, 0))
+        window.blit(txt5, (10,250))
     if color == "s":
         txt3 = font.render("SPECTATOR MODE", 1, (255, 0, 0))
         window.blit(txt3, (WIDTH / 2 - txt3.get_width() / 2, 10))
@@ -90,10 +95,10 @@ def redraw_gameWindow(window,bo,p1,p2,color,ready):
 
         if bo.turn == color:
             txt3 = font.render("YOUR TURN", 1, (255, 0, 0))
-            window.blit(txt3, (WIDTH / 2 - txt3.get_width() / 2, 700))
+            window.blit(txt3, (10, 550))
         else:
             txt3 = font.render("THEIR TURN", 1, (255, 0, 0))
-            window.blit(txt3, (WIDTH / 2 - txt3.get_width() / 2, 700))
+            window.blit(txt3, (10, 550))
 
     pygame.display.update()
 
@@ -163,13 +168,17 @@ def main():
             break
 
 
+
         if not color == "s":
             if p1Time <= 0:
-                bo = n.send("winner b")
-            elif p2Time <= 0:
                 bo = n.send("winner r")
+            elif p2Time <= 0:
+                bo = n.send("winner b")
             #kiểm tra chiếu bí
-
+        # if bo.check_mate("b"):
+        #     bo = n.send("winner b")
+        # elif bo.check_mate("r"):
+        #     bo = n.send("winner r")
         if bo.winner == "r":
             end_screen(win, "Red is the Winner!")
             run = False
@@ -192,11 +201,13 @@ def main():
                         bo = n.send("winner r")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # bo = n.send("checkmate " + color)
                 if color == bo.turn and bo.ready:
                     pos = pygame.mouse.get_pos()
                     bo = n.send("update moves")
                     i, j = click(pos)
                     bo = n.send("select " + str(i) + " " + str(j) + " " + color)
+                    bo = n.send("update moves")
     n.disconnect()
     bo = 0
     menu_screen(window)
