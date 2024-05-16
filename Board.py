@@ -86,16 +86,19 @@ class Board():
         return danger_moves
 
     def check_Mate(self, color):
+        flag = False
         for i in range(self.cols):
             for j in range(self.rows):
-                if self.board[i][j] != 0 and self.board[i][j].color == color:
-                    for move in self.board[i][j].move_list:
-                        if self.test_move((j,i),move,color) == True:
-                            return False
-        return True
+                if self.board[i][j] != 0:
+                    if self.board[i][j].color == color:
+                        self.update_moves()
+                        for move in self.board[i][j].move_list:
+                            if self.test_move((i,j),move,color) == True:
+                                return False
+                            else:
+                                flag = True
+        return flag
 
-
-        return False
     def is_checked(self, color):
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
@@ -158,7 +161,9 @@ class Board():
     def move(self, start, end, color):
         checkedBefore = self.is_checked(color)
         changed = True
+        # last_piece = None
         nBoard = self.board[:]
+        last_piece = nBoard[end[1]][end[0]]
         nBoard[start[0]][start[1]].change_pos((end[1],end[0]))
         nBoard[end[1]][end[0]] = nBoard[start[0]][start[1]]
         nBoard[start[0]][start[1]] = 0
@@ -169,7 +174,10 @@ class Board():
 
             nBoard[end[1]][end[0]].change_pos((start[0], start[1]))
             nBoard[start[0]][start[1]] = nBoard[end[1]][end[0]]
-            nBoard[end[1]][end[0]] = 0
+            if last_piece != 0:
+                nBoard[end[1]][end[0]] = last_piece
+            else:
+                nBoard[end[1]][end[0]] = 0
             self.board = nBoard
         else:
             self.reset_selected()
@@ -185,8 +193,8 @@ class Board():
 
     def test_move(self, start, end, color):
         checkedBefore = self.is_checked(color)
-        changed = True
         nBoard = self.board[:]
+        last_piece = nBoard[end[1]][end[0]]
         nBoard[start[0]][start[1]].change_pos((end[1],end[0]))
         nBoard[end[1]][end[0]] = nBoard[start[0]][start[1]]
         nBoard[start[0]][start[1]] = 0
@@ -194,15 +202,22 @@ class Board():
         if self.is_checked(color) or (checkedBefore and self.is_checked(color)):
             changed = False
             nBoard = self.board[:]
-
             nBoard[end[1]][end[0]].change_pos((start[0], start[1]))
             nBoard[start[0]][start[1]] = nBoard[end[1]][end[0]]
-            nBoard[end[1]][end[0]] = 0
+            if last_piece != 0:
+                nBoard[end[1]][end[0]] = last_piece
+            else:
+                nBoard[end[1]][end[0]] = 0
             self.board = nBoard
         else:
+            changed = True
+            nBoard = self.board[:]
             nBoard[end[1]][end[0]].change_pos((start[0], start[1]))
             nBoard[start[0]][start[1]] = nBoard[end[1]][end[0]]
-            nBoard[end[1]][end[0]] = 0
+            if last_piece != 0:
+                nBoard[end[1]][end[0]] = last_piece
+            else:
+                nBoard[end[1]][end[0]] = 0
             self.board = nBoard
             self.reset_selected()
         self.reset_selected()

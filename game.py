@@ -18,11 +18,11 @@ def menu_screen(window, name):
     while run:
         window.blit(background, (0, 0))
         small_font = pygame.font.SysFont("comicsans", 50)
-        font = pygame.font.SysFont("Arial", 20)
+        font = pygame.font.SysFont("comicsans", 80)
         txt1 = font.render("Chinese Chess", 1, (255, 255, 255))
-        window.blit(txt1, (500, 250))
+        window.blit(txt1, (200, 200))
         txt2 = font.render("Click to join game", 1, (255, 255, 255))
-        window.blit(txt2, (500, 500))
+        window.blit(txt2, (200, 400))
         if offline:
             off = small_font.render("Server Offline, Try Again Later...", 1, (255, 0, 0))
             window.blit(off, (WIDTH / 2 - off.get_width() / 2, 500))
@@ -40,8 +40,9 @@ def menu_screen(window, name):
                     bo = connect()
                     run = False
                     main()
-                    break
-                except:
+                    # break
+                except Exception as e:
+                    print(e)
                     print("Server Offline")
                     offline = True
 
@@ -64,14 +65,8 @@ def redraw_gameWindow(window,bo,p1,p2,color,ready):
         txt2 = font.render(bo.p2Name + "\'s Time: " + str(formatTime2), 1, (255, 255, 255))
     except Exception as e:
         print(e)
-    window.blit(txt, (900, 550))
-    window.blit(txt2, (900, 10))
-    if bo.capture:
-        txt5 = font.render("Capture", 1, (255, 255, 0))
-        window.blit(txt5, (10,250))
-    else:
-        txt5 = font.render("", 1, (255, 255, 0))
-        window.blit(txt5, (10,250))
+    window.blit(txt, (870, 550))
+    window.blit(txt2, (870, 10))
     if color == "s":
         txt3 = font.render("SPECTATOR MODE", 1, (255, 0, 0))
         window.blit(txt3, (WIDTH / 2 - txt3.get_width() / 2, 10))
@@ -85,7 +80,7 @@ def redraw_gameWindow(window,bo,p1,p2,color,ready):
         window.blit(txt, (WIDTH / 2 - txt.get_width() / 2, 300))
 
     if not color == "s":
-        font = pygame.font.SysFont("comicsans", 30)
+        font = pygame.font.SysFont("comicsans", 25)
         if color == "r":
             txt3 = font.render("YOU ARE RED", 1, (255, 0, 0))
             window.blit(txt3, (10,10))
@@ -97,18 +92,17 @@ def redraw_gameWindow(window,bo,p1,p2,color,ready):
             txt3 = font.render("YOUR TURN", 1, (255, 0, 0))
             window.blit(txt3, (10, 550))
         else:
-            txt3 = font.render("THEIR TURN", 1, (255, 0, 0))
+            txt3 = font.render("OPPONENT TURN", 1, (255, 0, 0))
             window.blit(txt3, (10, 550))
 
     pygame.display.update()
 
 def end_screen(window, text):
     pygame.font.init()
-    font = pygame.font.SysFont("Arial", 40)
-    txt = font.render(text, 1, (255, 255, 255))
-    window.blit(txt, (WIDTH / 2 - txt.get_width() / 2, 300))
+    font = pygame.font.SysFont("comicsans", 70)
+    txt = font.render(text, 1, (255, 0, 0))
+    window.blit(txt,(300,300))
     pygame.display.update()
-
     pygame.time.set_timer(pygame.USEREVENT+1,3000)
 
 
@@ -170,21 +164,14 @@ def main():
 
 
         if not color == "s":
-            if p1Time <= 0:
+            if p2Time <= 0:
                 bo = n.send("winner r")
-            elif p2Time <= 0:
+            elif p1Time <= 0:
                 bo = n.send("winner b")
-            #kiểm tra chiếu bí
-        # if bo.check_mate("b"):
-        #     bo = n.send("winner b")
-        # elif bo.check_mate("r"):
-        #     bo = n.send("winner r")
         if bo.winner == "r":
-            end_screen(win, "Red is the Winner!")
-            run = False
+            end_screen(window, "Red is the Winner!")
         elif bo.winner == "b":
-            end_screen(win, "Black is the winner")
-            run = False
+            end_screen(window, "Black is the winner")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -206,10 +193,16 @@ def main():
                     bo = n.send("update moves")
                     i, j = click(pos)
                     bo = n.send("select " + str(i) + " " + str(j) + " " + color)
-                    try:
-                        bo = n.send("checkmate " + color)
-                    except Exception as e:
-                        print(e)
+                    if color == 'r':
+                        try:
+                            bo = n.send("checkmate b")
+                        except Exception as e:
+                            print(e)
+                    else:
+                        try:
+                            bo = n.send("checkmate r")
+                        except Exception as e:
+                            print(e)
     n.disconnect()
     bo = 0
     menu_screen(window)
