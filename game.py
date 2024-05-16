@@ -201,13 +201,15 @@ def main():
                         bo = n.send("winner r")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # bo = n.send("checkmate " + color)
                 if color == bo.turn and bo.ready:
                     pos = pygame.mouse.get_pos()
                     bo = n.send("update moves")
                     i, j = click(pos)
                     bo = n.send("select " + str(i) + " " + str(j) + " " + color)
-                    bo = n.send("update moves")
+                    try:
+                        bo = n.send("checkmate " + color)
+                    except Exception as e:
+                        print(e)
     n.disconnect()
     bo = 0
     menu_screen(window)

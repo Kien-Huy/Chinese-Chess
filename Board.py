@@ -13,7 +13,7 @@ class Board():
         self.rows = rows
         self.cols = cols
         self.ready = False
-
+        self.moved = False
         self.last = None
         self.capture = False
         self.copy = True
@@ -142,9 +142,11 @@ class Board():
         if changed:
             if self.turn == "r":
                 self.turn = "b"
+                self.moved = True
                 self.reset_selected()
             else:
                 self.turn = "r"
+                self.moved = True
                 self.reset_selected()
 
     def reset_selected(self):
@@ -185,22 +187,22 @@ class Board():
         checkedBefore = self.is_checked(color)
         changed = True
         nBoard = self.board[:]
-        nBoard[start[0]][start[1]].change_pos((end[0],end[1]))
-        nBoard[end[0]][end[1]] = nBoard[start[0]][start[1]]
+        nBoard[start[0]][start[1]].change_pos((end[1],end[0]))
+        nBoard[end[1]][end[0]] = nBoard[start[0]][start[1]]
         nBoard[start[0]][start[1]] = 0
         self.board = nBoard
         if self.is_checked(color) or (checkedBefore and self.is_checked(color)):
             changed = False
             nBoard = self.board[:]
 
-            nBoard[end[0]][end[1]].change_pos((start[0], start[1]))
-            nBoard[start[0]][start[1]] = nBoard[end[0]][end[1]]
-            nBoard[end[0]][end[1]] = 0
+            nBoard[end[1]][end[0]].change_pos((start[0], start[1]))
+            nBoard[start[0]][start[1]] = nBoard[end[1]][end[0]]
+            nBoard[end[1]][end[0]] = 0
             self.board = nBoard
         else:
-            nBoard[end[0]][end[1]].change_pos((start[0], start[1]))
-            nBoard[start[0]][start[1]] = nBoard[end[0]][end[1]]
-            nBoard[end[0]][end[1]] = 0
+            nBoard[end[1]][end[0]].change_pos((start[0], start[1]))
+            nBoard[start[0]][start[1]] = nBoard[end[1]][end[0]]
+            nBoard[end[1]][end[0]] = 0
             self.board = nBoard
             self.reset_selected()
         self.reset_selected()

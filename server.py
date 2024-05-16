@@ -93,14 +93,16 @@ def threaded_client(conn, game, spec=False):
                         bo.update_moves()
 
                     if data.count("checkmate") > 0:
-                        al = data.split(" ")
-                        color = int(al[1])
-                        bo.capture = bo.check_Mate(color)
-                        if bo.capture:
-                            if color == 'r':
-                                bo.winner = "b"
-                            else:
-                                bo.winner = "r"
+                        if bo.moved:
+                            al = data.split(" ")
+                            color = al[1]
+                            bo.capture = bo.check_Mate(color)
+                            if bo.capture:
+                                if color == "r":
+                                    bo.winner = "b"
+                                else:
+                                    bo.winner = "r"
+                        bo.moved = False
 
                     if data.count("name") == 1:
                         name = data.split(" ")[1]
