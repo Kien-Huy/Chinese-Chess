@@ -281,7 +281,7 @@ class Canon(piece):
     def valid_moves(self, board):
         i = self.row
         j = self.col
-
+        flag = False
         moves = []
 
         # UP
@@ -295,6 +295,8 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((j, k))
+                            break
+                        if p.color == self.color:
                             break
                 break
             else:
@@ -312,6 +314,8 @@ class Canon(piece):
                         if p.color != self.color:
                             moves.append((j, k))
                             break
+                        if p.color == self.color:
+                            break
                 break
             else:
                 break
@@ -328,6 +332,8 @@ class Canon(piece):
                         if p.color != self.color:
                             moves.append((k, i))
                             break
+                        if p.color == self.color:
+                            break
                 break
             else:
                 break
@@ -343,6 +349,8 @@ class Canon(piece):
                     if p != 0:
                         if p.color != self.color:
                             moves.append((k, i))
+                            break
+                        if p.color == self.color:
                             break
                 break
             else:

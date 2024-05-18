@@ -103,14 +103,25 @@ class Board():
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
         king_pos = (-1, -1)
+        enemy_king_pos = (-1,-1)
+        flag = True
         for i in range(self.cols):
             for j in range(self.rows):
                 if self.board[i][j] != 0:
                     if self.board[i][j].king and self.board[i][j].color == color:
                         king_pos = (j, i)
+                    if self.board[i][j].king and self.board[i][j].color != color:
+                        enemy_king_pos = (j, i)
+
         for danger in danger_moves:
             if king_pos in danger:
                 return True
+        for i in range(self.cols):
+            if self.board[i][king_pos[0]] != 0 and i != enemy_king_pos[1] and i != king_pos[1]:
+                flag = False
+                break
+        if king_pos[0] == enemy_king_pos[0] and flag:
+            return True
         return False
 
 
